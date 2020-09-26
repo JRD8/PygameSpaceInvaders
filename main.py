@@ -79,7 +79,8 @@ def main():
 	lives = 5
 	clock = pygame.time.Clock()
 	main_font = pygame.font.SysFont("comicsans", 50)
-
+	lost_font = pygame.font.SysFont("comicsans", 60) # This font for the lost screen
+	
 	enemies = []
 	wave_length = 5
 	enemy_vel = 1 # Enemy speed
@@ -87,6 +88,9 @@ def main():
 	player_vel = 5 # Player speed
 
 	player = Player(300, 600) # Initial player position, different from Tim's 300,650
+
+	# lost = False
+	# #lost_count = 0	
 
 	def redraw_window():
 		WIN.blit(BG, (0,0))
@@ -99,6 +103,11 @@ def main():
 
 		player.draw(WIN)
 
+		if lost:
+			lost_label = lost_font.render("You Lost!", 1, (255, 255, 255))
+			WIN.blit(lost_label, (WIDTH/2 - lost_label.get_width()/2, 350))
+
+
 		for enemy in enemies:
 			enemy.draw(WIN)
 
@@ -106,6 +115,16 @@ def main():
 
 	while run:
 		clock.tick(FPS) # Tick the clock at a consistent rate, regardless of speed of computer
+		redraw_window()
+		if lives <= 0 or player.health <= 0:
+			lost = True
+			lost_count += 1
+
+		# if Lost:
+		# 	if lost_count > FPS * 3: # 3 second hold for lost_count timer
+		# 		run = False
+		# 	else:
+		# 		continue
 
 		# Spawning new enemies
 		if len(enemies) == 0:
@@ -131,11 +150,12 @@ def main():
 		if keys[pygame.K_s] and player.y + player_vel + player.get_height() < HEIGHT: # down
 			player.y += player_vel
 
-		for enemy in enemies:
+		for enemy in enemies[:]:
 			enemy.move(enemy_vel)
-			
-
-		redraw_window()
+			# If enemy hits the bottom of screen, the decrement the lives
+			if enemy.y + enemy.get_height() > HEIGHT:
+				lives -= 1
+				enemies.remove(enemy)
 
 
 main()
