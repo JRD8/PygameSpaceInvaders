@@ -89,8 +89,8 @@ def main():
 
 	player = Player(300, 600) # Initial player position, different from Tim's 300,650
 
-	# lost = False
-	# #lost_count = 0	
+	lost = False
+	lost_count = 0	
 
 	def redraw_window():
 		WIN.blit(BG, (0,0))
@@ -107,7 +107,6 @@ def main():
 			lost_label = lost_font.render("You Lost!", 1, (255, 255, 255))
 			WIN.blit(lost_label, (WIDTH/2 - lost_label.get_width()/2, 350))
 
-
 		for enemy in enemies:
 			enemy.draw(WIN)
 
@@ -116,15 +115,16 @@ def main():
 	while run:
 		clock.tick(FPS) # Tick the clock at a consistent rate, regardless of speed of computer
 		redraw_window()
+		
 		if lives <= 0 or player.health <= 0:
 			lost = True
 			lost_count += 1
 
-		# if Lost:
-		# 	if lost_count > FPS * 3: # 3 second hold for lost_count timer
-		# 		run = False
-		# 	else:
-		# 		continue
+		if lost:
+			if lost_count > FPS * 5: # 5 second hold for lost_count timer
+				run = False
+			else:
+				continue
 
 		# Spawning new enemies
 		if len(enemies) == 0:
@@ -156,7 +156,6 @@ def main():
 			if enemy.y + enemy.get_height() > HEIGHT:
 				lives -= 1
 				enemies.remove(enemy)
-
 
 main()
 
